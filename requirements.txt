@@ -1,0 +1,7 @@
+flask
+openai
+python-dotenv
+sentence-transformers
+faiss-cpu
+python-pptx
+PyMuPDF

@@ -1,0 +1,1235 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Marsh Client Advisor</title>
+
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            font-family: Arial, Helvetica, sans-serif;
+            background: #f4f6f8;
+            color: #172033;
+        }
+
+        /* =========================
+           HEADER
+        ========================= */
+
+        .header {
+            background: #07164d;
+            color: white;
+            padding: 26px 40px;
+        }
+
+        .header h1 {
+            margin: 0;
+            font-size: 30px;
+            font-weight: 700;
+        }
+
+        .header p {
+            margin: 7px 0 0;
+            color: #d8def5;
+            font-size: 15px;
+        }
+
+        /* =========================
+           MAIN CONTAINER
+        ========================= */
+
+        .container {
+            max-width: 1200px;
+            margin: 35px auto;
+            padding: 0 20px;
+        }
+
+        .card {
+            background: white;
+            border-radius: 10px;
+            padding: 28px;
+            margin-bottom: 24px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.06);
+            border: 1px solid #e4e7ec;
+        }
+
+        .card h2 {
+            margin-top: 0;
+            margin-bottom: 20px;
+            font-size: 22px;
+            color: #07164d;
+        }
+
+        /* =========================
+           FORM
+        ========================= */
+
+        label {
+            display: block;
+            font-weight: bold;
+            margin-bottom: 8px;
+        }
+
+        input[type="text"] {
+            width: 100%;
+            padding: 13px;
+            border: 1px solid #cfd4dc;
+            border-radius: 7px;
+            font-size: 15px;
+            margin-bottom: 22px;
+        }
+
+        input[type="text"]:focus {
+            outline: none;
+            border-color: #07164d;
+        }
+
+        .policy-list {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 12px;
+            margin-bottom: 25px;
+        }
+
+        .policy-item {
+            border: 1px solid #dfe3e8;
+            padding: 14px;
+            border-radius: 7px;
+            background: #fafbfc;
+            transition: 0.2s;
+        }
+
+        .policy-item:hover {
+            border-color: #07164d;
+            background: #f7f8fb;
+        }
+
+        .policy-item label {
+            font-weight: normal;
+            margin: 0;
+            cursor: pointer;
+        }
+
+        .policy-item input {
+            margin-right: 8px;
+        }
+
+        /* =========================
+           BUTTONS
+        ========================= */
+
+        button {
+            background: #07164d;
+            color: white;
+            border: none;
+            padding: 13px 23px;
+            border-radius: 7px;
+            cursor: pointer;
+            font-size: 15px;
+            font-weight: 600;
+        }
+
+        button:hover {
+            background: #10256f;
+        }
+
+        button:disabled {
+            background: #999;
+            cursor: not-allowed;
+        }
+
+        .downloads {
+            display: flex;
+            gap: 12px;
+            margin-top: 22px;
+            flex-wrap: wrap;
+        }
+
+        .downloads a {
+            text-decoration: none;
+            background: #07164d;
+            color: white;
+            padding: 12px 18px;
+            border-radius: 7px;
+            font-size: 14px;
+            font-weight: 600;
+        }
+
+        .downloads a:hover {
+            background: #10256f;
+        }
+
+        .audit-button {
+            background: #4b5563;
+        }
+
+        .audit-button:hover {
+            background: #374151;
+        }
+
+        /* =========================
+           LOADING / ERROR
+        ========================= */
+
+        .loading {
+            display: none;
+            margin-top: 18px;
+            color: #555;
+            font-size: 14px;
+        }
+
+        .error {
+            display: none;
+            background: #ffe5e5;
+            color: #a00000;
+            padding: 14px;
+            border-radius: 7px;
+            margin-top: 20px;
+            border: 1px solid #f2b8b8;
+            white-space: pre-wrap;
+        }
+
+        /* =========================
+           RESULT
+        ========================= */
+
+        .result {
+            display: none;
+        }
+
+        .status {
+            padding: 20px;
+            border-radius: 9px;
+            margin-bottom: 20px;
+            background: #f5f6f8;
+            border: 1px solid #e0e3e8;
+        }
+
+        .status-title {
+            font-size: 22px;
+            font-weight: 700;
+            margin-bottom: 15px;
+        }
+
+        .status-review {
+            border-left: 5px solid #d97706;
+        }
+
+        .status-pass {
+            border-left: 5px solid #15803d;
+        }
+
+        .status-fail {
+            border-left: 5px solid #b91c1c;
+        }
+
+        .status-item {
+            margin: 7px 0;
+            font-size: 15px;
+        }
+
+        .status-item strong {
+            color: #07164d;
+        }
+
+        /* =========================
+           METRICS
+        ========================= */
+
+        .metrics {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 12px;
+            margin-top: 20px;
+        }
+
+        .metric {
+            background: #f8f9fb;
+            border: 1px solid #e1e4e8;
+            border-radius: 8px;
+            padding: 16px;
+        }
+
+        .metric-label {
+            font-size: 12px;
+            color: #667085;
+            margin-bottom: 7px;
+        }
+
+        .metric-value {
+            font-size: 22px;
+            font-weight: 700;
+            color: #07164d;
+        }
+
+        /* =========================
+           AUDIT
+        ========================= */
+
+        .audit-intro {
+            color: #555;
+            line-height: 1.5;
+            margin-bottom: 20px;
+        }
+
+        .audit-table-wrapper {
+            overflow-x: auto;
+            border: 1px solid #dfe3e8;
+            border-radius: 8px;
+        }
+
+        .audit-table {
+            width: 100%;
+            border-collapse: collapse;
+            min-width: 1100px;
+        }
+
+        .audit-table th {
+            background: #07164d;
+            color: white;
+            text-align: left;
+            padding: 12px;
+            font-size: 13px;
+            white-space: nowrap;
+        }
+
+        .audit-table td {
+            padding: 13px 12px;
+            border-bottom: 1px solid #e5e7eb;
+            vertical-align: top;
+            font-size: 13px;
+            line-height: 1.45;
+        }
+
+        .audit-table tr:last-child td {
+            border-bottom: none;
+        }
+
+        .audit-table tr:hover {
+            background: #fafbfc;
+        }
+
+        .claim-cell {
+            min-width: 230px;
+        }
+
+        .evidence-cell {
+            min-width: 230px;
+        }
+
+        .explanation-cell {
+            min-width: 250px;
+        }
+
+        .status-badge {
+            display: inline-block;
+            padding: 5px 9px;
+            border-radius: 20px;
+            font-size: 11px;
+            font-weight: 700;
+            white-space: nowrap;
+        }
+
+        .badge-supported {
+            background: #dcfce7;
+            color: #166534;
+        }
+
+        .badge-review {
+            background: #fef3c7;
+            color: #92400e;
+        }
+
+        .badge-unsupported {
+            background: #fee2e2;
+            color: #991b1b;
+        }
+
+        .badge-unknown {
+            background: #e5e7eb;
+            color: #374151;
+        }
+
+        /* =========================
+           EMPTY / AUDIT MESSAGE
+        ========================= */
+
+        .empty-message {
+            padding: 20px;
+            background: #f8f9fb;
+            border: 1px solid #e1e4e8;
+            border-radius: 8px;
+            color: #667085;
+        }
+
+        /* =========================
+           AUDIT RAW JSON
+        ========================= */
+
+        .raw-audit {
+            margin-top: 25px;
+        }
+
+        .raw-audit summary {
+            cursor: pointer;
+            font-weight: 600;
+            color: #07164d;
+            margin-bottom: 12px;
+        }
+
+        pre {
+            background: #f5f6f8;
+            padding: 16px;
+            border-radius: 7px;
+            overflow-x: auto;
+            white-space: pre-wrap;
+            word-break: break-word;
+            font-size: 12px;
+            line-height: 1.45;
+        }
+
+        /* =========================
+           FOOTER
+        ========================= */
+
+        .footer-note {
+            text-align: center;
+            color: #777;
+            font-size: 12px;
+            margin: 30px 0;
+        }
+
+        /* =========================
+           RESPONSIVE
+        ========================= */
+
+        @media (max-width: 900px) {
+
+            .metrics {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            .policy-list {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        @media (max-width: 600px) {
+
+            .header {
+                padding: 22px;
+            }
+
+            .container {
+                margin: 20px auto;
+                padding: 0 12px;
+            }
+
+            .card {
+                padding: 20px;
+            }
+
+            .metrics {
+                grid-template-columns: 1fr;
+            }
+
+            .downloads {
+                flex-direction: column;
+            }
+
+            .downloads a {
+                text-align: center;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+<div class="header">
+    <h1>Marsh Client Advisor</h1>
+    <p>AI-assisted insurance pitch generation and audit</p>
+</div>
+
+
+<div class="container">
+
+    <!-- =========================
+         CLIENT INPUT
+    ========================== -->
+
+    <div class="card">
+
+        <h2>Client Information</h2>
+
+        <label for="companyName">
+            Company Name
+        </label>
+
+        <input
+            type="text"
+            id="companyName"
+            placeholder="e.g. Tata Motors"
+        >
+
+
+        <h2>Policy Documents</h2>
+
+        <div class="policy-list">
+
+            <div class="policy-item">
+                <label>
+                    <input
+                        type="checkbox"
+                        value="HDFC Product Brochure.txt"
+                        checked
+                    >
+                    HDFC Product Brochure
+                </label>
+            </div>
+
+
+            <div class="policy-item">
+                <label>
+                    <input
+                        type="checkbox"
+                        value="ABHI Product Brochure.txt"
+                        checked
+                    >
+                    ABHI Product Brochure
+                </label>
+            </div>
+
+
+            <div class="policy-item">
+                <label>
+                    <input
+                        type="checkbox"
+                        value="Care Health Product Brochure.txt"
+                        checked
+                    >
+                    Care Health Product Brochure
+                </label>
+            </div>
+
+
+            <div class="policy-item">
+                <label>
+                    <input
+                        type="checkbox"
+                        value="Niva Bupa Product Brochure.txt"
+                        checked
+                    >
+                    Niva Bupa Product Brochure
+                </label>
+            </div>
+
+        </div>
+
+
+        <button
+            id="generateButton"
+            onclick="generatePitch()"
+        >
+            Generate Pitch
+        </button>
+
+
+        <div id="loading" class="loading">
+            Generating pitch and auditing claims. Please wait...
+        </div>
+
+
+        <div id="error" class="error"></div>
+
+    </div>
+
+
+    <!-- =========================
+         RESULTS
+    ========================== -->
+
+    <div id="result" class="result">
+
+
+        <!-- =========================
+             GENERATION RESULT
+        ========================== -->
+
+        <div class="card">
+
+            <h2>Generation Result</h2>
+
+            <div id="status" class="status"></div>
+
+
+            <div class="metrics">
+
+                <div class="metric">
+                    <div class="metric-label">
+                        Confidence Score
+                    </div>
+
+                    <div
+                        class="metric-value"
+                        id="confidenceMetric"
+                    >
+                        —
+                    </div>
+                </div>
+
+
+                <div class="metric">
+                    <div class="metric-label">
+                        Claims Checked
+                    </div>
+
+                    <div
+                        class="metric-value"
+                        id="claimsMetric"
+                    >
+                        —
+                    </div>
+                </div>
+
+
+                <div class="metric">
+                    <div class="metric-label">
+                        Claims Requiring Review
+                    </div>
+
+                    <div
+                        class="metric-value"
+                        id="reviewMetric"
+                    >
+                        —
+                    </div>
+                </div>
+
+
+                <div class="metric">
+                    <div class="metric-label">
+                        Unsupported Claims
+                    </div>
+
+                    <div
+                        class="metric-value"
+                        id="unsupportedMetric"
+                    >
+                        —
+                    </div>
+                </div>
+
+            </div>
+
+
+            <div class="downloads">
+
+                <a
+                    href="/download-ppt"
+                    target="_blank"
+                >
+                    Download PowerPoint
+                </a>
+
+
+                <a
+                    href="/download-audit"
+                    target="_blank"
+                    class="audit-button"
+                >
+                    Download Audit Report
+                </a>
+
+            </div>
+
+        </div>
+
+
+        <!-- =========================
+             AUDIT TRACEABILITY
+        ========================== -->
+
+        <div class="card">
+
+            <h2>Audit Traceability</h2>
+
+            <p class="audit-intro">
+                Each generated claim is checked against the supplied
+                policy documents. Claims that can be traced to a policy
+                clause show their source document, page, section, clause,
+                and supporting evidence. Statements that cannot be directly
+                traced are flagged for advisor review.
+            </p>
+
+
+            <div
+                id="auditClaims"
+                class="audit-table-wrapper"
+            >
+                <div class="empty-message">
+                    Loading audit results...
+                </div>
+            </div>
+
+
+            <div class="raw-audit">
+
+                <details>
+
+                    <summary>
+                        View Raw Audit JSON
+                    </summary>
+
+                    <pre id="auditSummary"></pre>
+
+                </details>
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <div class="footer-note">
+        Marsh Client Advisor • AI-assisted pitch generation with policy claim traceability
+    </div>
+
+</div>
+
+
+<script>
+
+/* =========================================================
+   HTML ESCAPE
+========================================================= */
+
+function escapeHtml(value) {
+
+    if (value === null || value === undefined) {
+        return "";
+    }
+
+    return String(value)
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;")
+        .replace(/'/g, "&#039;");
+}
+
+
+/* =========================================================
+   STATUS BADGE
+========================================================= */
+
+function getStatusBadge(status) {
+
+    const normalized =
+        String(status || "")
+            .toUpperCase()
+            .trim();
+
+
+    if (normalized === "SUPPORTED") {
+
+        return `
+            <span class="status-badge badge-supported">
+                SUPPORTED
+            </span>
+        `;
+    }
+
+
+    if (normalized === "REVIEW") {
+
+        return `
+            <span class="status-badge badge-review">
+                REVIEW
+            </span>
+        `;
+    }
+
+
+    if (normalized === "UNSUPPORTED") {
+
+        return `
+            <span class="status-badge badge-unsupported">
+                UNSUPPORTED
+            </span>
+        `;
+    }
+
+
+    return `
+        <span class="status-badge badge-unknown">
+            ${escapeHtml(normalized || "UNKNOWN")}
+        </span>
+    `;
+}
+
+
+/* =========================================================
+   RENDER CLAIMS
+========================================================= */
+
+function renderAuditClaims(claims) {
+
+    const container =
+        document.getElementById("auditClaims");
+
+
+    if (!Array.isArray(claims) || claims.length === 0) {
+
+        container.innerHTML = `
+            <div class="empty-message">
+                No claim-level audit records were returned.
+                Please use the Download Audit Report button
+                to inspect the generated audit file.
+            </div>
+        `;
+
+        return;
+    }
+
+
+    let rows = "";
+
+
+    claims.forEach((item, index) => {
+
+        rows += `
+            <tr>
+
+                <td>
+                    ${index + 1}
+                </td>
+
+
+                <td>
+                    ${getStatusBadge(item.status)}
+                </td>
+
+
+                <td class="claim-cell">
+                    ${escapeHtml(item.claim || "")}
+                </td>
+
+
+                <td>
+                    ${escapeHtml(item.claim_type || "")}
+                </td>
+
+
+                <td>
+                    ${escapeHtml(item.source || "—")}
+                </td>
+
+
+                <td>
+                    ${escapeHtml(item.page || "—")}
+                </td>
+
+
+                <td>
+                    ${escapeHtml(item.section || "—")}
+                </td>
+
+
+                <td>
+                    ${escapeHtml(item.clause || "—")}
+                </td>
+
+
+                <td class="evidence-cell">
+                    ${escapeHtml(item.evidence || "—")}
+                </td>
+
+
+                <td class="explanation-cell">
+                    ${escapeHtml(item.explanation || "—")}
+                </td>
+
+            </tr>
+        `;
+    });
+
+
+    container.innerHTML = `
+
+        <table class="audit-table">
+
+            <thead>
+
+                <tr>
+                    <th>#</th>
+                    <th>Status</th>
+                    <th>Claim</th>
+                    <th>Claim Type</th>
+                    <th>Source Document</th>
+                    <th>Page</th>
+                    <th>Section</th>
+                    <th>Clause</th>
+                    <th>Evidence</th>
+                    <th>Explanation</th>
+                </tr>
+
+            </thead>
+
+            <tbody>
+                ${rows}
+            </tbody>
+
+        </table>
+    `;
+}
+
+
+/* =========================================================
+   LOAD DETAILED AUDIT REPORT
+========================================================= */
+
+async function loadAuditReport() {
+
+    try {
+
+        const response =
+            await fetch(
+                "/download-audit",
+                {
+                    method: "GET"
+                }
+            );
+
+
+        if (!response.ok) {
+            throw new Error(
+                "Unable to load the detailed audit report."
+            );
+        }
+
+
+        const auditData =
+            await response.json();
+
+
+        renderAuditClaims(
+            auditData.claims || []
+        );
+
+
+        document.getElementById("auditSummary").textContent =
+            JSON.stringify(
+                auditData,
+                null,
+                2
+            );
+
+
+        return auditData;
+
+    }
+
+    catch (err) {
+
+        document.getElementById("auditClaims").innerHTML = `
+            <div class="empty-message">
+                The audit report was generated, but the detailed
+                claim table could not be loaded automatically.
+                Please use "Download Audit Report" to view it.
+            </div>
+        `;
+
+        return null;
+    }
+}
+
+
+/* =========================================================
+   GENERATE PITCH
+========================================================= */
+
+async function generatePitch() {
+
+    const companyName =
+        document
+            .getElementById("companyName")
+            .value
+            .trim();
+
+
+    const checkboxes =
+        document.querySelectorAll(
+            '.policy-item input[type="checkbox"]:checked'
+        );
+
+
+    const policyFiles =
+        Array.from(checkboxes).map(
+            checkbox => checkbox.value
+        );
+
+
+    const button =
+        document.getElementById(
+            "generateButton"
+        );
+
+
+    const loading =
+        document.getElementById(
+            "loading"
+        );
+
+
+    const error =
+        document.getElementById(
+            "error"
+        );
+
+
+    const result =
+        document.getElementById(
+            "result"
+        );
+
+
+    /* -------------------------
+       RESET
+    ------------------------- */
+
+    error.style.display = "none";
+
+    result.style.display = "none";
+
+
+    /* -------------------------
+       VALIDATION
+    ------------------------- */
+
+    if (!companyName) {
+
+        error.textContent =
+            "Please enter a company name.";
+
+        error.style.display =
+            "block";
+
+        return;
+    }
+
+
+    if (policyFiles.length === 0) {
+
+        error.textContent =
+            "Please select at least one policy document.";
+
+        error.style.display =
+            "block";
+
+        return;
+    }
+
+
+    /* -------------------------
+       START
+    ------------------------- */
+
+    button.disabled = true;
+
+    loading.style.display =
+        "block";
+
+
+    try {
+
+        const response =
+            await fetch(
+                "/generate-ppt",
+                {
+                    method: "POST",
+
+                    headers: {
+                        "Content-Type":
+                            "application/json"
+                    },
+
+                    body: JSON.stringify({
+                        company_name:
+                            companyName,
+
+                        policy_files:
+                            policyFiles
+                    })
+                }
+            );
+
+
+        const data =
+            await response.json();
+
+
+        if (!response.ok) {
+
+            throw new Error(
+                data.details ||
+                data.error ||
+                "Pitch generation failed."
+            );
+        }
+
+
+        /* -------------------------
+           SHOW RESULT
+        ------------------------- */
+
+        result.style.display =
+            "block";
+
+
+        const audit =
+            data.audit_summary || {};
+
+
+        const overallStatus =
+            audit.overall_status ||
+            "REVIEW";
+
+
+        const normalizedStatus =
+            String(overallStatus)
+                .toUpperCase();
+
+
+        let statusClass =
+            "status-review";
+
+
+        if (
+            normalizedStatus === "PASS" ||
+            normalizedStatus === "PASSED"
+        ) {
+            statusClass =
+                "status-pass";
+        }
+
+
+        if (
+            normalizedStatus === "FAIL" ||
+            normalizedStatus === "FAILED"
+        ) {
+            statusClass =
+                "status-fail";
+        }
+
+
+        const statusElement =
+            document.getElementById(
+                "status"
+            );
+
+
+        statusElement.className =
+            `status ${statusClass}`;
+
+
+        statusElement.innerHTML = `
+
+            <div class="status-title">
+                Audit Status: ${escapeHtml(normalizedStatus)}
+            </div>
+
+
+            <div class="status-item">
+                <strong>Advisor Action:</strong>
+                ${escapeHtml(
+                    audit.advisor_action ||
+                    "Review the generated audit report."
+                )}
+            </div>
+
+        `;
+
+
+        /* -------------------------
+           METRICS
+        ------------------------- */
+
+        document.getElementById(
+            "confidenceMetric"
+        ).textContent =
+            audit.confidence_score ??
+            "N/A";
+
+
+        document.getElementById(
+            "claimsMetric"
+        ).textContent =
+            audit.claims_checked ??
+            "N/A";
+
+
+        document.getElementById(
+            "reviewMetric"
+        ).textContent =
+            audit.review_claims ??
+            "N/A";
+
+
+        document.getElementById(
+            "unsupportedMetric"
+        ).textContent =
+            audit.unsupported_claims ??
+            "N/A";
+
+
+        /* -------------------------
+           LOAD DETAILED AUDIT
+        ------------------------- */
+
+        await loadAuditReport();
+
+
+        /* -------------------------
+           SCROLL TO RESULT
+        ------------------------- */
+
+        result.scrollIntoView({
+            behavior: "smooth",
+            block: "start"
+        });
+
+    }
+
+
+    catch (err) {
+
+        error.textContent =
+            err.message;
+
+        error.style.display =
+            "block";
+    }
+
+
+    finally {
+
+        button.disabled =
+            false;
+
+        loading.style.display =
+            "none";
+    }
+}
+
+</script>
+
+</body>
+</html>
